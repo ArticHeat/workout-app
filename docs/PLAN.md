@@ -202,3 +202,23 @@ Phases 0–1 are deliberately AI-free: a solid data model makes everything after
 1. Is this just for you first, or for other users from day one? (Affects auth in phase 0 vs. phase 6.)
 2. Can you share the system prompt / instructions from your current Claude chat app? It becomes `prompts/system.v1.md` and the first skills files.
 3. LangSmith (hosted, best LangGraph integration) or Langfuse (open source)?
+
+## 10. Cost
+
+Everything except the Claude API fits in free tiers at personal scale (limits as of Oct 2026; re-check before relying on them):
+
+| Service | Free allowance | Enough? |
+|---|---|---|
+| Workers | 100k requests/day, **10 ms CPU per request** | Yes. Time spent waiting on Claude does not count as CPU time. Watch the 10 ms limit with LangGraph.js; if it is hit, Workers Paid is $5/month |
+| D1 | 5 GB, 5M rows read/day, 100k rows written/day | Yes |
+| Vectorize | 30M queried / 5M stored dimensions per month | Yes (5M stored ≈ 6,500 vectors at 768 dims) |
+| Workers AI (embeddings) | 10k neurons/day | Yes |
+| Queues | 10k operations/day | Yes |
+| Langfuse Cloud Hobby | ~50k units/month (LangSmith free: ~5k traces/month) | Yes |
+| GitHub Actions | Unlimited on public repos, 2,000 min/month private | Yes |
+| **Claude API** | **No ongoing free tier: pay per token** | Main cost |
+
+Ways to keep Claude cost low: use Haiku for most turns and route only plan-building
+to Sonnet; enable prompt caching on the system prompt and skills; trim context with
+per-section token budgets; run CI evals only when `prompts/`, `skills/` or `worker/agent/`
+change; set a monthly spend limit in the Anthropic Console.
