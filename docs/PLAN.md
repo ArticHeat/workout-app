@@ -222,3 +222,15 @@ Ways to keep Claude cost low: use Haiku for most turns and route only plan-build
 to Sonnet; enable prompt caching on the system prompt and skills; trim context with
 per-section token budgets; run CI evals only when `prompts/`, `skills/` or `worker/agent/`
 change; set a monthly spend limit in the Anthropic Console.
+
+### Free LLM option: Gemini
+
+Keep the model provider swappable: `agent.config.ts` maps each role (`agent`,
+`summarizer`, `judge`) to a provider and model, and LangChain's chat model interface
+(`@langchain/anthropic`, `@langchain/google-genai`) means no graph code changes.
+
+- Development and testing can run on Gemini's free tier (Flash models).
+- Free-tier caveats: daily request caps are low and have been cut before; one agent turn
+  costs several LLM calls (tool rounds, guardrail retry); and free-tier prompts may be used
+  by Google to improve its products, which matters for injury and health details.
+- On a 429 (quota hit), fall back to the next provider in the config.
